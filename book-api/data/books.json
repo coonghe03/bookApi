@@ -1,0 +1,15 @@
+[
+  {
+    "bookId": "1",
+    "authorId": "100",
+    "publisherId": "200",
+    "title": "Go Programming",
+    "publicationDate": "2023-01-01",
+    "isbn": "123456789",
+    "pages": 300,
+    "genre": "Programming",
+    "description": "A book about Go programming.",
+    "price": 29.99,
+    "quantity": 10
+  }
+]
