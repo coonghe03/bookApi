@@ -1,0 +1,10 @@
+# Ignore Go build artifacts
+/book-api
+*.exe
+*.out
+*.o
+
+# Ignore Git & dependencies
+.git
+/vendor
+

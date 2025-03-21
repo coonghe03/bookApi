@@ -1,11 +1,12 @@
 package main
 
 import (
-    "encoding/json"
-    "fmt"
-    "net/http"
-    "github.com/gorilla/mux"
-    "book-api/models"
+	"book-api/models"
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 // Get all books
@@ -137,6 +138,7 @@ func main() {
     router := mux.NewRouter()
 
     router.HandleFunc("/books", getBooksHandler).Methods("GET")
+    router.HandleFunc("/books/search", searchBooksHandler).Methods("GET")
     router.HandleFunc("/books/{id}", getBookByIDHandler).Methods("GET")
     router.HandleFunc("/books", addBookHandler).Methods("POST")
     router.HandleFunc("/books/{id}", updateBookHandler).Methods("PUT")
@@ -144,4 +146,29 @@ func main() {
 
     fmt.Println("Server is running on port 9090...")
     http.ListenAndServe(":9090", router)
+}
+
+// Search book
+func searchBooksHandler(w http.ResponseWriter, r *http.Request) {
+    query := r.URL.Query().Get("q")
+    if query == "" {
+        http.Error(w, "Missing search query parameter", http.StatusBadRequest)
+        return
+    }
+
+    fmt.Println("🔎 Concurrent Search for:", query) // Debug log
+
+    results, err := models.SearchBooksConcurrent(query, models.ReadBooks)
+    if err != nil {
+        http.Error(w, "Error searching books", http.StatusInternalServerError)
+        return
+    }
+
+    if len(results) == 0 {
+        http.Error(w, "Book not found", http.StatusNotFound)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(results)
 }
